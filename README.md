@@ -5,7 +5,7 @@ Below I gather interesting and valuable papers about Physics-Informed Neural Net
 ODE-NN are rather new field in neural network
 
 - [Sections](#sections)
- - [The most important papers](# The most important papers)
+ - [The most important papers](#The-most-important-papers)
 
 ## The most important papers 
 
