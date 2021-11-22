@@ -1,10 +1,10 @@
-#ODE Neural Networks
+# ODE Neural Networks
 
 Below I gather interesting and valuable papers about Physics-Informed Neural Networks, sometimes called ODE-NN (Ordinary differential equation - Neural Network)
 
 ODE-NN are rather new field in neural network
 
-- [Sections](#sections)
+- [ODE Neural Networks](#sections)
  - [The most important papers](#The-most-important-papers)
 
 ## The most important papers 
