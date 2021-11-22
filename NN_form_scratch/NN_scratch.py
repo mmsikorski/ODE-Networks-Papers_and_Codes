@@ -8,5 +8,6 @@ class Network:
     
 
 
-if "__main__":
+if "__main_":
+    print("A")
     net = Network()
