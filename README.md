@@ -7,7 +7,7 @@ ODE-NNs are rather new field in neural networks that attract people due to their
 - [ODE Neural Networks](#sections)
 	- [The most important papers](#The-most-important-papers)
 	- [Interesting papers that touch applications](#interesting-papers)
-
+	- [Interesting githubs about neural networks](#Interesting-githubs-about-neural-networks)
 ## The most important papers 
 
 1. **Neural differential ordinary equations**, *Yulia Rubanova, Ricky T. Q. Chen, David Duvenaud*, NeurIPS 2018. [[paper](https://arxiv.org/pdf/1806.07366.pdf)]
@@ -19,3 +19,12 @@ The fundamental question is, like in each neural network, how to train neural ne
 ## Interesting papers that touch applications
 
 1. **Latent ODEs for Irregularly-Sampled Time Series**, *Yulia Rubanova, Ricky T. Q. Chen, David Duvenaud*, NeurIPS 2019. [[paper](https://papers.nips.cc/paper/2018/file69386f6bb1dfed68692a24c8686939b9-Paper.pdf)]
+
+## Interesting githubs about neural networks
+
+Below, I collect interesting githubs about neural networks.
+
+1. **Mikhail Surtsukov's github**, [[link](https://msurtsukov.github.io/Neural-ODE/)]
+
+In the github above, there's a very accessible implementation of ODE. Good start point to understanding ODEs accurate.
+
