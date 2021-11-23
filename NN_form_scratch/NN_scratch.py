@@ -19,6 +19,7 @@ class Network:
         for i in range(self.num_layers):
             self.weights = [np.random.randn(y, x)
                             for x, y in zip(self.size[:-1], self.size[1:])]
+            self.biases = [np.random.randn(x,1) for x in self.size[1:]]
             #self.weights = [np.random.rand((self.size[i], self.size[i+1])) for i in range(self.num_layers)]
             
             
@@ -34,6 +35,7 @@ class Network:
             
         print("Biases : ", biases)
         print("Weights : ", weights)
+        print("Parameters : ", biases+weights)
     
     
 
