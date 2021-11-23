@@ -1,5 +1,5 @@
 import numpy as np
-
+import random
 
 class Network:
     def __init__(self, size):
@@ -7,13 +7,23 @@ class Network:
         self.size = size
         self.num_layers = len(size)
         
-        self.weights = None
-        self.biases = None
+        self.weights = []
+        self.biases = []
         #pass
 
-    def train():
+    def train(self):
         pass
     
+    
+    def parameters_initializer(self):
+        for i in range(self.num_layers):
+            self.weights = [np.random.randn(y, x)
+                            for x, y in zip(self.size[:-1], self.size[1:])]
+            #self.weights = [np.random.rand((self.size[i], self.size[i+1])) for i in range(self.num_layers)]
+            
+            
+            
+            
     def net_parameters(self):
         biases = 0
         weights = 0
@@ -30,3 +40,4 @@ class Network:
 
 net = Network([784, 10, 10])
 net.net_parameters()
+net.parameters_initializer()
