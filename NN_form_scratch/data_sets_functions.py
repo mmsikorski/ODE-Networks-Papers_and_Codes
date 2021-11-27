@@ -12,7 +12,7 @@ from tensorflow import keras
 #y_train = keras.utils.to_categorical(y_train, num_classes)
 
 
-def cifar_dataset():
+def cifar_dataset_flatten():
     (x_train_cif, y_train_cif), (x_test_cif, y_test_cif) = keras.datasets.cifar10.load_data()
     num_classes = 10
     y_train_cif = keras.utils.to_categorical(y_train_cif, num_classes)
@@ -26,7 +26,7 @@ def cifar_dataset():
     train_cif = []
 
     for i in range(len(y_train_cif)):
-        train_cif.append( (x_train_cif[i].reshape(32*32*3,1), y_train_cif[i].reshape(10,1) ) )
+        train_cif.append( (x_train_cif[i].reshape(32*32*3,1)/256, y_train_cif[i].reshape(10,1)) )
         
 
     #y_test_cif = keras.utils.to_categorical(y_test_cif, num_classes)
@@ -34,7 +34,20 @@ def cifar_dataset():
     test_cif = []
     x_test_cif = x_test_cif.reshape(10000, 32*32*3)
     for i in range(len(y_test_cif)):
-        test_cif.append( (x_test_cif[i].reshape(32*32*3, 1), y_test_cif[i][0]))
+        test_cif.append( (x_test_cif[i].reshape(32*32*3, 1)/256, y_test_cif[i][0]))
+        
+    """
+    0: airplane
+    1: automobile
+    2: bird
+    3: cat
+    4: deer
+    5: dog
+    6: frog
+    7: horse
+    8: ship
+    9: truck
+    """
         
     return train_cif, test_cif
 
@@ -69,7 +82,7 @@ def mnist_fashion_dataset():
         train_f.append( (x[i]/256, y_train[i].reshape(10,1))  )
         
     for i in range(len(y_test)):
-        test_f.append( (y[i]/256, y_test[i]) )
+        test_f.append( (y[i]/256, y_test[i]))
     """
     Label	Description
     0	T-shirt/top
@@ -89,7 +102,7 @@ def mnist_fashion_dataset():
 
 
 
-def mnist():
+def mnist_dataset():
     training_data_ZIP, validation_data_ZIP, test_data_ZIP = mnist_loader.load_data_wrapper()
     training_data = list(training_data_ZIP)
     validation_data = list(validation_data_ZIP)

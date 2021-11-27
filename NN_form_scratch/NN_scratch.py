@@ -5,7 +5,7 @@ import mnist_loader
 import sklearn.metrics as sk
 import time
 import matplotlib.pyplot as plt
-import data_sets_functions
+import data_sets_functions as dsf
 
 # %%
 class Activations():
@@ -33,21 +33,23 @@ class Activations():
 
 
 class Network:
-    def __init__(self, size):
+    def __init__(self, size, shuf):
         
         self.size = size
         self.num_layers = len(size)
         self.activation = Activations()
-        
+        self.shuf = shuf
         self.weights = []
         self.biases = []
         self.monitor_training_data = False
         self.monitor_test_data = True
-        self.monitor_trianing_cost = False
+        self.monitor_trianing_cost = True
+        self.monitor_test_cost = True
         
         self.training_cost = []
         self.accuracy_test = []
-        self.accuraty_training = []
+        self.accuracy_training = []
+        self.test_cost = []
         #pass
     
     def cost(self, a, y):
@@ -70,7 +72,7 @@ class Network:
         n = len(train)
         for j in range(epochs):
             batches = []
-            #random.shuffle(training_data)
+            if self.shuf == True: random.shuffle(train)
             for i in range(0, n, batch_size):
                 batches.append(train[i:i+batch_size])
             
@@ -83,18 +85,23 @@ class Network:
                 self.weights = [w-(eta/len(batch))*nw for w, nw in zip(self.weights, nabla_w)]
                 self.biases = [b-(eta/len(batch))*nb for b, nb in zip(self.biases, nabla_b)]
             print("{0} / {1}".format(j, epochs))
+            
             if self.monitor_test_data:
                 A = np.round(self.evaluate(test, False)/len(test),2)
-                print("(Test) Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(test, False), len(test), A))       
+                print("(Test) Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(test, False), len(test), A))
                 self.accuracy_test.append(A)
                 #print("Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(test, False), len(test), self.evaluate(test, False)/len(test)))
             if self.monitor_training_data:
                 A = np.round(self.evaluate(train, True)/len(train),2)
                 print("(Train) Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(train, True), len(train), A))
-                self.accuraty_training.append(A)
+                self.accuracy_training.append(A)
             if self.monitor_trianing_cost: 
                 cost = self.total_cost(train, True)
                 self.training_cost.append(cost/len(train))
+            
+            if self.monitor_test_cost:
+                cost = self.total_cost(test, False)
+                self.test_cost.append(cost/len(test))
                 
             if j == epochs-1: #evaluate in last epoch
                 print("Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(test, False), len(test), self.evaluate(test, False)/len(test)))
@@ -107,12 +114,26 @@ class Network:
             for x, y in data:
                 a = self.feedforward(x)
                 cost += self.cost(a, y)
+        else:
+            for x,y in data:
+                a = self.feedforward(x)
+                y = self.vectorized_result(y)
+                cost += self.cost(a, y)
         return cost
         """batches = [
             train[i:i+batch] for i in range(0, n, batch)
             ]"""
         
         #print(batches)
+    def vectorized_result(self, j):
+        """Return a 10-dimensional unit vector with a 1.0 in the j'th position
+        and zeroes elsewhere.  This is used to convert a digit (0...9)
+        into a corresponding desired output from the neural network.
+
+        """
+        e = np.zeros((10, 1))
+        e[j] = 1.0
+        return e
     
     def eval_fashion(self, data, is_fashion):
         
@@ -238,18 +259,104 @@ class Network:
 
 #net = Network([784, 80, 30, 10])
 
-(training_data, test_data) = data_sets_functions.mnist()
-input_size = training_data[0][0].shape[0]
+#(training_data, test_data) = data_sets_functions.mnist_fashion()
 
 
+"""
+in dsf.below()
+def cifar_dataset():
+def mnist(): 
+def mnist_fashion_dataset():
+    
+"""
+#(train, test) = dsf.mnist()
+#(train, test) = dsf.mnist_fashion_dataset()
+#(train, test) = dsf.cifar_dataset_flatten()
+
+"""(train, test) = dsf.mnist()
+input_size = train[0][0].shape[0]
 net = Network([input_size, 30, 10])
 net.net_parameters()
 net.parameters_initializer()
 
-net.train(training_data, test_data, 30, 10, 3)
+net.train(train, test, 30, 10, 3)"""
+
+# %%
+"""(train, test) = dsf.mnist_fashion_dataset()
+input_size = train[0][0].shape[0]
+net = Network([input_size, 30, 10])
+net.net_parameters()
+net.parameters_initializer()
+
+net.train(train, test, 30, 10, 3)"""
+
+# %%
+(train, test) = dsf.mnist_dataset()
+#(train, test) = dsf.cifar_dataset_flatten()
+#(train, test) = dsf.mnist_fashion_dataset()
+input_size = train[0][0].shape[0]
+
+"""net1 = Network([input_size, 30, 10], False)
+net1.net_parameters()
+net1.parameters_initializer()
+net1.train(train, test, 50, 10, 3)"""
+
+train = train[:15000]
+epoch = 20
+batch = 10
+eta = 3
+
+net1 = Network([input_size, 10], True)
+net1.net_parameters()
+net1.parameters_initializer()
+
+net1.train(train, test, epoch, batch, eta)
 
 
 
+
+net2 = Network([input_size, 10], False)
+net2.net_parameters()
+net2.parameters_initializer()
+
+net2.train(train, test, epoch, batch, eta)
+
+
+plt.plot(net1.accuracy_test, label = "shuf = True")
+plt.plot(net2.accuracy_test, label = "shuf = False")
+plt.title("test_accuracy")
+plt.legend()
+plt.show()
+
+
+plt.plot(net1.accuracy_training, label = "shuf = True")
+plt.plot(net2.accuracy_training, label = "shuf = False")
+plt.title("train_accuracy")
+plt.legend()
+plt.show() 
+
+plt.plot(net1.training_cost, label = "shuf = True")
+plt.plot(net2.training_cost, label = "shuf = False")
+plt.title("train_cost")
+plt.legend()
+plt.show() 
+
+plt.plot(net1.test_cost, label = "shuf = True")
+plt.plot(net2.test_cost, label = "shuf = False")
+plt.title("test_cost")
+plt.legend()
+plt.show() 
+
+
+# %%
+#A = train[0]
+"""for i in range(10,20):
+    img = train[i][0].reshape(32,32,3)
+    
+    plt.imshow(img)
+    plt.show()"""
+    
+    
 
 
 
