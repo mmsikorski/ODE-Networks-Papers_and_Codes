@@ -41,7 +41,7 @@ class Network:
         self.shuf = shuf
         self.weights = []
         self.biases = []
-        self.monitor_training_data = False
+        self.monitor_training_data = True
         self.monitor_test_data = True
         self.monitor_trianing_cost = True
         self.monitor_test_cost = True
@@ -96,12 +96,12 @@ class Network:
                 print("(Train) Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(train, True), len(train), A))
                 self.accuracy_training.append(A)
             if self.monitor_trianing_cost: 
-                cost = self.total_cost(train, True)
-                self.training_cost.append(cost/len(train))
+                cost_train = self.total_cost(train, True)
+                self.training_cost.append(cost_train/len(train))
             
             if self.monitor_test_cost:
-                cost = self.total_cost(test, False)
-                self.test_cost.append(cost/len(test))
+                cost_test = self.total_cost(test, False)
+                self.test_cost.append(cost_test/len(test))
                 
             if j == epochs-1: #evaluate in last epoch
                 print("Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(test, False), len(test), self.evaluate(test, False)/len(test)))
@@ -230,10 +230,15 @@ class Network:
         
     
     
-    def parameters_initializer(self):
+    def parameters_initializer(self, better_init = False):
         for i in range(self.num_layers):
-            self.weights = [np.random.randn(y, x)
+            if better_init == True:
+                self.weights = [np.random.randn(y, x)/np.sqrt(x)
                             for x, y in zip(self.size[:-1], self.size[1:])]
+            else:
+                self.weights = [np.random.randn(y, x)
+                                for x, y in zip(self.size[:-1], self.size[1:])]
+                
             self.biases = [np.random.randn(x,1) for x in self.size[1:]]
             #self.weights = [np.random.rand((self.size[i], self.size[i+1])) for i in range(self.num_layers)]
             
@@ -301,12 +306,12 @@ net1.net_parameters()
 net1.parameters_initializer()
 net1.train(train, test, 50, 10, 3)"""
 
-train = train[:15000]
-epoch = 20
+#train = train[:5000]
+epoch = 30
 batch = 10
 eta = 3
 
-net1 = Network([input_size, 10], True)
+net1 = Network([input_size, 10], False)
 net1.net_parameters()
 net1.parameters_initializer()
 
@@ -315,39 +320,42 @@ net1.train(train, test, epoch, batch, eta)
 
 
 
-net2 = Network([input_size, 10], False)
+net2 = Network([input_size, 10], True)
 net2.net_parameters()
-net2.parameters_initializer()
+net2.parameters_initializer(True)
 
 net2.train(train, test, epoch, batch, eta)
 
 
 plt.plot(net1.accuracy_test, label = "shuf = True")
-plt.plot(net2.accuracy_test, label = "shuf = False")
+plt.plot(net2.accuracy_test, label = "shuf = False, init = true")
 plt.title("test_accuracy")
 plt.legend()
 plt.show()
 
 
 plt.plot(net1.accuracy_training, label = "shuf = True")
-plt.plot(net2.accuracy_training, label = "shuf = False")
+plt.plot(net2.accuracy_training, label = "shuf = False, init = true")
 plt.title("train_accuracy")
 plt.legend()
 plt.show() 
 
 plt.plot(net1.training_cost, label = "shuf = True")
-plt.plot(net2.training_cost, label = "shuf = False")
+plt.plot(net2.training_cost, label = "shuf = False, init = true")
 plt.title("train_cost")
 plt.legend()
 plt.show() 
 
 plt.plot(net1.test_cost, label = "shuf = True")
-plt.plot(net2.test_cost, label = "shuf = False")
+plt.plot(net2.test_cost, label = "shuf = False, init = true")
 plt.title("test_cost")
 plt.legend()
 plt.show() 
 
-
+"""plt.plot(net2.test_cost, label = "test_cost")
+plt.plot(net2.training_cost, label = "train_cost")
+plt.plot()
+plt.show()"""
 # %%
 #A = train[0]
 """for i in range(10,20):
