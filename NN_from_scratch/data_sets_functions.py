@@ -26,7 +26,7 @@ def cifar_dataset_flatten():
     train_cif = []
 
     for i in range(len(y_train_cif)):
-        train_cif.append( (x_train_cif[i].reshape(32*32*3,1)/256, y_train_cif[i].reshape(10,1)) )
+        train_cif.append( (x_train_cif[i].reshape(32*32*3,1)/255, y_train_cif[i].reshape(10,1)) )
         
 
     #y_test_cif = keras.utils.to_categorical(y_test_cif, num_classes)
@@ -34,7 +34,7 @@ def cifar_dataset_flatten():
     test_cif = []
     x_test_cif = x_test_cif.reshape(10000, 32*32*3)
     for i in range(len(y_test_cif)):
-        test_cif.append( (x_test_cif[i].reshape(32*32*3, 1)/256, y_test_cif[i][0]))
+        test_cif.append( (x_test_cif[i].reshape(32*32*3, 1)/255, y_test_cif[i][0]))
         
     """
     0: airplane
@@ -79,10 +79,10 @@ def mnist_fashion_dataset():
     y_train = keras.utils.to_categorical(y_train, num_classes)
 
     for i in range(len(x_train)):
-        train_f.append( (x[i]/256, y_train[i].reshape(10,1))  )
+        train_f.append( (x[i]/255, y_train[i].reshape(10,1))  )
         
     for i in range(len(y_test)):
-        test_f.append( (y[i]/256, y_test[i]))
+        test_f.append( (y[i]/255, y_test[i]))
     """
     Label	Description
     0	T-shirt/top

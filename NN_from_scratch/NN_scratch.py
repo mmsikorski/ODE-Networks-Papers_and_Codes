@@ -87,13 +87,13 @@ class Network:
             print("{0} / {1}".format(j, epochs))
             
             if self.monitor_test_data:
-                A = np.round(self.evaluate(test, False)/len(test),2)
-                print("(Test) Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(test, False), len(test), A))
+                A = np.round(self.evaluate_test(test)/len(test),4)
+                print("(Test) Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate_test(test), len(test), A))
                 self.accuracy_test.append(A)
                 #print("Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(test, False), len(test), self.evaluate(test, False)/len(test)))
             if self.monitor_training_data:
-                A = np.round(self.evaluate(train, True)/len(train),2)
-                print("(Train) Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(train, True), len(train), A))
+                A = np.round(self.evaluate_train(train)/len(train),4)
+                print("(Train) Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate_train(train), len(train), A))
                 self.accuracy_training.append(A)
             if self.monitor_trianing_cost: 
                 cost_train = self.total_cost(train, True)
@@ -104,8 +104,8 @@ class Network:
                 self.test_cost.append(cost_test/len(test))
                 
             if j == epochs-1: #evaluate in last epoch
-                print("Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(test, False), len(test), self.evaluate(test, False)/len(test)))
-                print("Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate(train, True), len(train), self.evaluate(train, True)/len(train)))
+                print("Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate_test(test), len(test), self.evaluate_test(test)/len(test)))
+                print("Epoch {0}: {1} / {2} = {3}".format(j, self.evaluate_train(train), len(train), self.evaluate_train(train)/len(train)))
 
     def total_cost(self, data, convert = True):
         #if data are a traning data then convert must be True
@@ -148,6 +148,38 @@ class Network:
         return sum(int(x == y) for (x, y) in results)
         
     def evaluate(self, data, convert = False):
+        """Return the number of test inputs for which the neural
+        network outputs the correct result. Note that the neural
+        network's output is assumed to be the index of whichever
+        neuron in the final layer has the highest activation."""
+        #np.argmax(x[1])
+        if convert == True: #Training_data
+            results = [(np.argmax(self.feedforward(x[0])), np.argmax(x[1]))
+                        for x in data]
+            #print(results)
+        else: #Test_data
+            results = [(np.argmax(self.feedforward(x)), y)
+                        for (x, y) in data]
+            #print(results)
+        return sum(int(x == y) for (x, y) in results)
+    
+    def evaluate_train(self, data, convert = True):
+        """Return the number of test inputs for which the neural
+        network outputs the correct result. Note that the neural
+        network's output is assumed to be the index of whichever
+        neuron in the final layer has the highest activation."""
+        #np.argmax(x[1])
+        if convert == True: #Training_data
+            results = [(np.argmax(self.feedforward(x[0])), np.argmax(x[1]))
+                        for x in data]
+            #print(results)
+        else: #Test_data
+            results = [(np.argmax(self.feedforward(x)), y)
+                        for (x, y) in data]
+            #print(results)
+        return sum(int(x == y) for (x, y) in results)
+    
+    def evaluate_test(self, data, convert = False):
         """Return the number of test inputs for which the neural
         network outputs the correct result. Note that the neural
         network's output is assumed to be the index of whichever
@@ -296,8 +328,9 @@ net.parameters_initializer()
 net.train(train, test, 30, 10, 3)"""
 
 # %%
-(train, test) = dsf.mnist_dataset()
-#(train, test) = dsf.cifar_dataset_flatten()
+#(train, test) = dsf.mnist_dataset()
+(train, test) = dsf.cifar_dataset_flatten()
+train = train[:10000]
 #(train, test) = dsf.mnist_fashion_dataset()
 input_size = train[0][0].shape[0]
 
@@ -307,47 +340,49 @@ net1.parameters_initializer()
 net1.train(train, test, 50, 10, 3)"""
 
 #train = train[:5000]
-epoch = 30
+epoch = 150
 batch = 10
 eta = 3
 
-net1 = Network([input_size, 10], False)
+# %%
+#True = shufle
+net1 = Network([input_size,30, 10], False)
 net1.net_parameters()
-net1.parameters_initializer()
+net1.parameters_initializer(True)
 
 net1.train(train, test, epoch, batch, eta)
 
 
+# %%
 
-
-net2 = Network([input_size, 10], True)
+net2 = Network([input_size, 30, 10], True)
 net2.net_parameters()
 net2.parameters_initializer(True)
 
 net2.train(train, test, epoch, batch, eta)
+# %%
 
-
-plt.plot(net1.accuracy_test, label = "shuf = True")
-plt.plot(net2.accuracy_test, label = "shuf = False, init = true")
+plt.plot(net1.accuracy_test, label = "shuf = False")
+plt.plot(net2.accuracy_test, label = "shuf = True, init = true")
 plt.title("test_accuracy")
 plt.legend()
 plt.show()
 
 
-plt.plot(net1.accuracy_training, label = "shuf = True")
-plt.plot(net2.accuracy_training, label = "shuf = False, init = true")
+plt.plot(net1.accuracy_training, label = "shuf = False")
+plt.plot(net2.accuracy_training, label = "shuf = True, init = true")
 plt.title("train_accuracy")
 plt.legend()
 plt.show() 
 
-plt.plot(net1.training_cost, label = "shuf = True")
-plt.plot(net2.training_cost, label = "shuf = False, init = true")
+plt.plot(net1.training_cost, label = "shuf = false")
+plt.plot(net2.training_cost, label = "shuf = true, init = true")
 plt.title("train_cost")
 plt.legend()
 plt.show() 
 
-plt.plot(net1.test_cost, label = "shuf = True")
-plt.plot(net2.test_cost, label = "shuf = False, init = true")
+plt.plot(net1.test_cost, label = "shuf = false")
+plt.plot(net2.test_cost, label = "shuf = true, init = true")
 plt.title("test_cost")
 plt.legend()
 plt.show() 
