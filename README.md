@@ -28,3 +28,5 @@ Below, I collect interesting githubs about neural networks.
 
 In the github above, there's a very accessible implementation of ODE. Good start point to understanding ODEs accurate.
 
+**I'll write more later**, [[link](https://github.com/idrl-lab/PINNpapers)]
+
